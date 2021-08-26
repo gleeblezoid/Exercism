@@ -12,7 +12,13 @@ type Node struct {
 
 func Build(records []Record) (*Node, error) {
 	// Nodes have an ID (the parent ID) and then a slice of pointers to nodes
-	// We need to go through the slice of records and get the parent ID for each []record
-	// If the parent is one we already have then it should be the key to a map of node pointers
-	// The value for that map is the slice of child node pointers which need to be constructed based on the parent ID
+	// We need to go through the slice of records and make a node which takes the parent ID as an int key and the ID as a pointer which is put into a slice
+	var n Node
+
+	for _, r := range records {
+		n.ID = r.Parent
+		childID := []&r.ID
+		n.Children = append(n.Children, childID)
+	}
+	return n, nil
 }

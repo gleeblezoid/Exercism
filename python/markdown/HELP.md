@@ -30,7 +30,7 @@ For other options, see `python -m pytest -h`. PyTest documentation can be found 
 
 ## Submitting your solution
 
-You can submit your solution using the `exercism submit gigasecond.py` command.
+You can submit your solution using the `exercism submit markdown.py` command.
 This command will upload your solution to the Exercism website and print the solution page's URL.
 
 It's possible to submit an incomplete solution which allows you to:

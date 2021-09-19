@@ -1,5 +1,7 @@
 package tree
 
+import "sort"
+
 // Record type for tree input
 type Record struct {
 	ID     int
@@ -14,17 +16,41 @@ type Node struct {
 
 // Build records function
 func Build(records []Record) (*Node, error) {
-	// Nodes have an ID (the parent ID) and then a slice of pointers to nodes
-	// We need to go through the slice of records and make a node which takes the parent ID as an int key and the ID as a pointer which is put into a slice
-	var n *Node
-	var c []*Node
-
-	for _, r := range records {
-		n.ID = r.Parent
-		c[0].ID = r.ID
-		c[0].Children = nil
-		n.Children = c
-
+	if len(records) == 0 {
+		return nil, nil
 	}
+	idList = orderedList(records)
+	n = makeChildren(idList, records)
 	return n, nil
+}
+
+// Grab the parent ints from the records and turn into an ordered list
+func orderedList(records []Record) []int {
+	idList := make([]int)
+	for _, r := range records {
+		idList = append(idList, r.Parent)
+	}
+	idList = sort.IntSlice(idList)
+	return idList
+}
+
+// For each parent ID make a node struct out of records
+func makeChildren(idList []int, records []Record) []*Node {
+	var nodes []*Node
+	for _, v := range idList {
+		var child Node
+		child.ID = v
+		for _, r := range records {
+			if r.Parent == v {
+				child.Children = append(child.Children, &r.ID)
+			}
+		}
+		nodes = append(nodes, &child)
+	}
+	return nodes
+}
+
+// Nest the nodes by parent hierarchy
+func nestNodes([]Node) []*Node {
+	return nil
 }

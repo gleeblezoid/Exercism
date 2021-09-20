@@ -19,14 +19,14 @@ func Build(records []Record) (*Node, error) {
 	if len(records) == 0 {
 		return nil, nil
 	}
-	idList = orderedList(records)
-	n = makeChildren(idList, records)
+	idList := orderedList(records)
+	n := makeChildren(idList, records)
 	return n, nil
 }
 
 // Grab the parent ints from the records and turn into an ordered list
 func orderedList(records []Record) []int {
-	idList := make([]int)
+	idList := make([]int, len(records))
 	for _, r := range records {
 		idList = append(idList, r.Parent)
 	}

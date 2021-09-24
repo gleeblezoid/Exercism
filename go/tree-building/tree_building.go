@@ -1,7 +1,9 @@
 package tree
 
-import "sort"
-
+import {
+	"sort"
+	"errors"
+}
 // Record type for tree input
 type Record struct {
 	ID     int
@@ -14,43 +16,29 @@ type Node struct {
 	Children []*Node
 }
 
-// Build records function
 func Build(records []Record) (*Node, error) {
+	// If there's no input at all then error out
 	if len(records) == 0 {
 		return nil, nil
 	}
-	idList := orderedList(records)
-	n := makeChildren(idList, records)
-	return n, nil
-}
-
-// Grab the parent ints from the records and turn into an ordered list
-func orderedList(records []Record) []int {
-	idList := make([]int, len(records))
-	for _, r := range records {
-		idList = append(idList, r.Parent)
+	sort.SliceStable(records, func(i, j int) bool {
+		return records[i].ID < records[j].ID
+	})
+	if records[0].Parent != 0 || records[0].ID != 0 {
+		return nil, errors.New("no root node")
 	}
-	idList = sort.IntSlice(idList)
-	return idList
-}
-
-// For each parent ID make a node struct out of records
-func makeChildren(idList []int, records []Record) []*Node {
-	var nodes []*Node
-	for _, v := range idList {
-		var child Node
-		child.ID = v
-		for _, r := range records {
-			if r.Parent == v {
-				child.Children = append(child.Children, &r.ID)
-			}
+	nodes := make([]Node, len(records))
+	for i, record := range records[1:] {
+		if i+1 != record.ID {
+			return nil, errors.New("duplicate or non-continuous node")
 		}
-		nodes = append(nodes, &child)
+		if i+1 <= record.Parent {
+			return nil, errors.New("direct/indirect cycle in the tree")
+		}
+		nodes[i+1].ID = i + 1
+		children := nodes[record.Parent].Children
+		children = append(children, &nodes[i+1])
+		nodes[record.Parent].Children = children
 	}
-	return nodes
-}
-
-// Nest the nodes by parent hierarchy
-func nestNodes([]Node) []*Node {
-	return nil
+	return &nodes[0], nil
 }
